@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace ProductsApp.Domain.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public User AddedBy { get; set; }
-        public Guid AddedById { get; set; }
+        public Categories Category { get; set; }
+        public ICollection<CartItem> CartItems { get; set; }
     }
 }

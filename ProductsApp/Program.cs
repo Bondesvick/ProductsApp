@@ -1,4 +1,10 @@
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
+using Polly;
+using ProductsApp.Domain.Repositories;
+using ProductsApp.Extensions;
+using ProductsApp.Infrastructure.Repositories;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddAppDbContext(builder.Configuration.GetSection("DataSource:ConnectionString").Value);
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -16,30 +25,6 @@ builder.Services.AddSwaggerGen(c =>
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
 
     c.IncludeXmlComments(xmlFilePath);
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme."
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] {}
-                    }
-                });
 });
 
 var app = builder.Build();
@@ -49,6 +34,19 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage(); 
 }
+
+var retry = Policy.Handle<SqlException>()
+                .WaitAndRetry(new TimeSpan[]
+                {
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(6),
+                    TimeSpan.FromSeconds(12)
+                });
+
+//var context = builder.Services.GetRequiredService<DataContext>();
+
+//retry.Execute(() =>
+  //app.ApplicationServices.GetService<AppDbContext>().Database.Migrate());
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProductsApp.Domain.Entities
 {
-    public class Cart
+    public enum Categories
     {
-        public Guid Id { get; set; }
-        public ICollection<CartItem> CartItems { get; set; }
+        DRUG,
+        GROCERY,
+        TOOL,
+        CLOTHING,
+        ELECTRONIC,
+        MEAL,
+        DRINK,
+        FABRIC,
+        FURNITURE
     }
 }
