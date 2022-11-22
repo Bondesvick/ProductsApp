@@ -1,4 +1,5 @@
-﻿using ProductsApp.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ProductsApp.Domain.Entities;
 using ProductsApp.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -16,29 +17,43 @@ namespace ProductsApp.Infrastructure.Repositories
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public Product Add(Product student)
+
+        public IUnitOfWork UnitOfWork => _context;
+
+        public Product Add(Product product)
         {
-            throw new NotImplementedException();
+            return _context.Products.Add(product).Entity;
         }
 
-        public Product Delete(Product student)
+        public Product Delete(Product product)
         {
-            throw new NotImplementedException();
+            _context.Products.Remove(product);
+
+            return product;
         }
 
-        public Task<IEnumerable<Product>> GetAsync()
+        public async Task<IEnumerable<Product>> GetAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Products
+               .AsNoTracking()
+               .ToListAsync();
         }
 
-        public Task<Product> GetAsync(Guid id)
+        public async Task<Product> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var product = await _context.Products.Where(s => s.Id == id)
+               .AsNoTracking().FirstOrDefaultAsync();
+
+            if (product == null) return null;
+
+            _context.Entry(product).State = EntityState.Detached;
+            return product;
         }
 
-        public Product Update(Product student)
+        public Product Update(Product product)
         {
-            throw new NotImplementedException();
+            _context.Entry(product).State = EntityState.Modified;
+            return product;
         }
     }
 }

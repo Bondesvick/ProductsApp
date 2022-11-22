@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ProductsApp.Infrastructure.SchemaDefinitions
 {
-    internal class ProductEntitySchemaDefinition : IEntityTypeConfiguration<Product>
+    public class ProductEntitySchemaDefinition : IEntityTypeConfiguration<Product>
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {

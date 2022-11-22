@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace ProductsApp.Domain.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IRepository
     {
         Task<IEnumerable<Product>> GetAsync();
 
         Task<Product> GetAsync(Guid id);
 
-        Product Add(Product student);
+        Product Add(Product product);
 
-        Product Update(Product student);
+        Product Update(Product product);
 
-        Product Delete(Product student);
+        Product Delete(Product product);
     }
 }

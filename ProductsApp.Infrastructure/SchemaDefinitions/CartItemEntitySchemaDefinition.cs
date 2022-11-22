@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ProductsApp.Infrastructure.SchemaDefinitions
 {
-    internal class CartItemEntitySchemaDefinition : IEntityTypeConfiguration<CartItem>
+    public class CartItemEntitySchemaDefinition : IEntityTypeConfiguration<CartItem>
     {
         public void Configure(EntityTypeBuilder<CartItem> builder)
         {
