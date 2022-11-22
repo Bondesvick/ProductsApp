@@ -1,6 +1,7 @@
 ﻿using ProductsApp.Domain.Entities;
 using ProductsApp.Domain.Repositories;
 using ProductsApp.Domain.Requets;
+using ProductsApp.Domain.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,19 +19,22 @@ namespace ProductsApp.Domain.Services
 
         public IProductRepository _productRepository { get; }
 
-        public async Task<Product> AddProductAsync(AddProduct request)
+        public async Task<GeneralResponse<Product>> AddProductAsync(AddProduct request)
         {
+            var existing = await _productRepository.GetProductByName(request.Name);
+
+            if (existing != null) return new GeneralResponse<Product> {Message = "Product with Name already exist", Code = 400 };
+
             var item = new Product
             {
                 Name = request.Name,
                 Price = request.Price,
-                Category = request.Category
             };
 
             var result = _productRepository.Add(item);
             await _productRepository.UnitOfWork.SaveChangesAsync();
 
-            return result;
+            return new GeneralResponse<Product> { Data = result, Message = "Successful", Code = 201};
         }
 
         public async Task<Product> DeleteProductAsync(Guid id)
@@ -52,7 +56,6 @@ namespace ProductsApp.Domain.Services
             if (existingRecord == null) throw new ArgumentException($"Entity with {request.Id} is not present");
 
             existingRecord.Price = request.Price;
-            existingRecord.Category = request.Category;
             existingRecord.Name = request.Name;
 
             var result = _productRepository.Update(existingRecord);
@@ -61,17 +64,33 @@ namespace ProductsApp.Domain.Services
             return existingRecord;
         }
 
-        public async Task<Product> GetProductAsync(Guid id)
+        public async Task<GeneralResponse<Product>> GetProductAsync(Guid id)
         {
             //if (id == null) throw new ArgumentNullException();
             var entity = await _productRepository.GetAsync(id);
-            return entity;
+            if (entity == null) return new GeneralResponse<Product> { Code = 404, Message = "Product not found" };
+            return new GeneralResponse<Product>
+            {
+                Data = entity,
+                Message = "successful",
+                Code = 200
+            };
         }
 
         public async Task<IEnumerable<Product>> GetProductsAsync()
         {
             var result = await _productRepository.GetAsync();
             return result;
+        } 
+        
+        public async Task<IEnumerable<Product>> SearchProductsAsync(SearchProduct request)
+        {
+            var result = await _productRepository.Search(request.Name);
+            return result;
         }
+
+        //public Categories GetCategories() {
+        //    return Categories;
+        //}
     }
 }

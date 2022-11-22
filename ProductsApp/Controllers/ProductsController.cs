@@ -1,9 +1,11 @@
 ﻿using Azure;
+using Azure.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductsApp.Domain.Entities;
 using ProductsApp.Domain.Repositories;
 using ProductsApp.Domain.Requets;
+using ProductsApp.Domain.Responses;
 using ProductsApp.Domain.Services;
 using System.Net;
 
@@ -20,13 +22,15 @@ namespace ProductsApp.Controllers
         /// 
         /// </summary>
         public IProductService _productService { get; }
+        public ICartService _cartService { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, ICartService cartService)
         {
             _productService = productService;
+            _cartService = cartService;
         }
 
         /// <summary>
@@ -35,8 +39,8 @@ namespace ProductsApp.Controllers
         /// <param name="id">Product Id</param>
         /// <returns></returns>
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(200, Type = typeof(Product))]
+        [ProducesResponseType(typeof(GeneralResponse<Product>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(200, Type = typeof(GeneralResponse<Product>))]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetProduct(Guid id)
         {
@@ -53,18 +57,18 @@ namespace ProductsApp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(201, Type = typeof(Product))]
+        [ProducesResponseType(typeof(GeneralResponse<Product>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(201, Type = typeof(GeneralResponse<Product>))]
         [HttpPost]
         public async Task<IActionResult> AddProduct(AddProduct request)
         {
             var response = await _productService.AddProductAsync(request);
 
             if (response == null)
-                return StatusCode(400, response);
+                return StatusCode(response.Code, response);
 
             return CreatedAtAction(nameof(GetProduct),
-                new { id = response.Id }, response);
+                new { id = response.Data.Id }, response);
         }
 
         /// <summary>
@@ -73,12 +77,14 @@ namespace ProductsApp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(201, Type = typeof(Cart))]
+        [ProducesResponseType(typeof(GeneralResponse<Cart>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(201, Type = typeof(GeneralResponse<Cart>))]
         [HttpPost("AddProductToCart")]
-        public IActionResult AddProductToCart(AddProductToCart request)
+        public async Task<IActionResult> AddProductToCart(AddProductToCart request)
         {
-            return Ok();
+            var response = await _cartService.AddToCart(request);
+
+            return StatusCode(response.Code, response);
         }
 
         /// <summary>
@@ -86,22 +92,31 @@ namespace ProductsApp.Controllers
         /// </summary>
         /// <returns></returns>
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
         [ProducesResponseType(200, Type = typeof(Cart))]
         [HttpGet("GetCartProducts")]
-        public IActionResult GetCartProducts()
+        public async Task<IActionResult> GetCartProducts()
         {
-            return Ok();
+            var response = await _productService.GetProductsAsync();
+
+            if (response == null)
+                return StatusCode(400, response);
+
+            return Ok(response);
         }
-       
+
         /// <summary>
         /// Get the sum of all products added to Cart
         /// </summary>
         /// <returns></returns>
+        [ProducesResponseType(typeof(GeneralResponse<CartSum>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(200, Type = typeof(GeneralResponse<CartSum>))]
         [HttpGet("GetCartProductsTotalPrice")]
         public IActionResult GetCartProductsTotalPrice()
         {
-            return Ok();
+            var sum = _cartService.GetCartSum();
+
+            return StatusCode(sum.Code, sum);
         }
 
 
@@ -109,20 +124,32 @@ namespace ProductsApp.Controllers
         /// Search Product by name
         /// </summary>
         /// <returns></returns>
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Product>))]
         [HttpPost("SearchProduct")]
-        public IActionResult SearchProduct(SearchProduct searchProduct)
+        public async Task<IActionResult> SearchProduct(SearchProduct request)
         {
-            return Ok();
-        } 
-        
+            var response = await _productService.SearchProductsAsync(request);
+
+            if (response == null)
+                return StatusCode(400, response);
+
+            return Ok(response);
+        }
+
         /// <summary>
         /// Remove Product from Cart
         /// </summary>
         /// <returns></returns>
+        [ProducesResponseType(typeof(GeneralResponse<CartSum>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(200, Type = typeof(GeneralResponse<CartSum>))]
         [HttpDelete("DeleteCartItem/{id:guid}")]
-        public IActionResult DeleteCartItem(Guid id)
+        public async Task<IActionResult> DeleteCartItem(Guid id)
         {
-            return Ok();
+            var response = await _cartService.Delete(id);
+
+            return StatusCode(response.Code, response);
         }
 
     }

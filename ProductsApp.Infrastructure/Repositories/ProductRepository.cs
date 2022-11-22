@@ -55,5 +55,22 @@ namespace ProductsApp.Infrastructure.Repositories
             _context.Entry(product).State = EntityState.Modified;
             return product;
         }
+
+        public async Task<IEnumerable<Product>> Search(string name)
+        {
+            var products = _context.Products.Where(s => s.Name.ToLower().Contains(name.ToLower()));
+
+            if (products == null) return null;
+
+            _context.Entry(products).State = EntityState.Detached;
+            return products.ToList();
+        }
+
+        public async Task<Product?> GetProductByName(string name)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower());
+
+            return product;
+        }
     }
 }

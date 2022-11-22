@@ -11,6 +11,5 @@ namespace ProductsApp.Domain.Requets
     {
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public Categories Category { get; set; }
     }
 }

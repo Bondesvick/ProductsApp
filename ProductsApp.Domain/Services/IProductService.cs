@@ -1,5 +1,6 @@
 ﻿using ProductsApp.Domain.Entities;
 using ProductsApp.Domain.Requets;
+using ProductsApp.Domain.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,13 @@ namespace ProductsApp.Domain.Services
     {
         Task<IEnumerable<Product>> GetProductsAsync();
 
-        Task<Product> GetProductAsync(Guid id);
+        Task<GeneralResponse<Product>> GetProductAsync(Guid id);
 
-        Task<Product> AddProductAsync(AddProduct request);
+        Task<GeneralResponse<Product>> AddProductAsync(AddProduct request);
 
         Task<Product> EditProductAsync(Product request);
 
         Task<Product> DeleteProductAsync(Guid id);
+        Task<IEnumerable<Product>> SearchProductsAsync(SearchProduct request);
     }
 }

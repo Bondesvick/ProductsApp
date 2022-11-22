@@ -18,5 +18,8 @@ namespace ProductsApp.Domain.Repositories
         Product Update(Product product);
 
         Product Delete(Product product);
+        Task<IEnumerable<Product>> Search(string name);
+
+        Task<Product> GetProductByName(string name);
     }
 }

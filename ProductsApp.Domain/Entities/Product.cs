@@ -12,7 +12,6 @@ namespace ProductsApp.Domain.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public Categories Category { get; set; }
         public ICollection<CartItem> CartItems { get; set; }
     }
 }

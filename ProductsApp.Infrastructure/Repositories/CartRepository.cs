@@ -39,5 +39,34 @@ namespace ProductsApp.Infrastructure.Repositories
             _context.Entry(product).State = EntityState.Detached;
             return product;
         }
+
+        public async Task<CartItem> GetCartItemByProductId(Guid id)
+        {
+            var cart = await _context.Carts.Include(x => x.CartItems).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+
+            var item =  cart.CartItems.FirstOrDefault(s => s.ProductId == id);
+
+            if (item == null) return null;
+
+            _context.Entry(item).State = EntityState.Detached;
+            return item;
+        }
+
+        public CartItem? Delete(CartItem item)
+        {
+            var response = _context.CartItems.Remove(item);
+
+            return item;
+        }
+
+        public Decimal SumCartTotal()
+        {
+            var cart = _context.Carts.Include(x => x.CartItems).ThenInclude(x => x.Product).FirstOrDefault();
+
+            var sum = cart.CartItems.Sum(x => x.Product.Price);
+
+            _context.Entry(cart).State = EntityState.Detached;
+            return sum;
+        }
     }
 }
