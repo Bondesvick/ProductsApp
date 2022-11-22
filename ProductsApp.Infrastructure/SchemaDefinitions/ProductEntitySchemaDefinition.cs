@@ -15,6 +15,8 @@ namespace ProductsApp.Infrastructure.SchemaDefinitions
         {
             builder.ToTable("Product");
 
+            builder.HasKey(x => x.Id);
+
 
             builder.Property(x => x.Name)
                .HasMaxLength(20)

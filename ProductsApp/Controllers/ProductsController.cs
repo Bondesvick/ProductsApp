@@ -77,8 +77,8 @@ namespace ProductsApp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(GeneralResponse<Cart>), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(201, Type = typeof(GeneralResponse<Cart>))]
+        [ProducesResponseType(typeof(GeneralResponse<CartItem>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(201, Type = typeof(GeneralResponse<CartItem>))]
         [HttpPost("AddProductToCart")]
         public async Task<IActionResult> AddProductToCart(AddProductToCart request)
         {
@@ -88,7 +88,7 @@ namespace ProductsApp.Controllers
         }
 
         /// <summary>
-        /// Get all products Added to Cart
+        /// Get all products
         /// </summary>
         /// <returns></returns>
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

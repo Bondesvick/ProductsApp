@@ -62,7 +62,7 @@ namespace ProductsApp.Infrastructure.Repositories
 
             if (products == null) return null;
 
-            _context.Entry(products).State = EntityState.Detached;
+            //_context.Entry(products).State = EntityState.Detached;
             return products.ToList();
         }
 

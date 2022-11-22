@@ -15,6 +15,8 @@ namespace ProductsApp.Infrastructure.SchemaDefinitions
         {
             builder.ToTable("CartItem");
 
+            builder.HasKey(x => x.Id);
+
             builder
                 .HasOne(e => e.Cart)
                 .WithMany(c => c.CartItems)

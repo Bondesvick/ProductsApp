@@ -11,7 +11,7 @@ namespace ProductsApp.Domain.Services
 {
     public interface ICartService
     {
-        Task<GeneralResponse<Cart?>> AddToCart(AddProductToCart item);
+        Task<GeneralResponse<CartItem?>> AddToCart(AddProductToCart item);
         Task<GeneralResponse<CartItem>> Delete(Guid id);
         GeneralResponse<CartSum> GetCartSum();
     }

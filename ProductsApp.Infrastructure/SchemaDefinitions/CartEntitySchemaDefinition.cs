@@ -17,6 +17,8 @@ namespace ProductsApp.Infrastructure.SchemaDefinitions
         {
             builder.ToTable("Cart");
 
+            builder.HasKey(x => x.Id);
+
             var entries = new List<Cart>
             {
                 new Cart

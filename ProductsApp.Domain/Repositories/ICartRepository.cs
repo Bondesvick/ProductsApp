@@ -9,7 +9,7 @@ namespace ProductsApp.Domain.Repositories
 {
     public interface ICartRepository : IRepository
     {
-        Cart AddToCart(CartItem item);
+        CartItem AddToCart(CartItem item);
         CartItem Delete(CartItem item);
         Task<CartItem> GetCartItemAsync(Guid id);
         Task<CartItem> GetCartItemByProductId(Guid id);

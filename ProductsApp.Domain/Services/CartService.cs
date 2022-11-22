@@ -21,25 +21,25 @@ namespace ProductsApp.Domain.Services
         public ICartRepository _cartRepository { get; }
         public IProductService _productService { get; }
 
-        public async Task<GeneralResponse<Cart?>> AddToCart(AddProductToCart item)
+        public async Task<GeneralResponse<CartItem?>> AddToCart(AddProductToCart item)
         {
             var product = await _productService.GetProductAsync(item.ProductId);
-            if (product.Data == null) return new GeneralResponse<Cart?> { Message = product.Message, Code = product.Code};
+            if (product.Data == null) return new GeneralResponse<CartItem?> { Message = product.Message, Code = product.Code};
 
             var cartItem = await _cartRepository.GetCartItemByProductId(item.ProductId);
-            if (cartItem != null) return new GeneralResponse<Cart?> { Message = "Product already exist in the cart", Code = 400 };
+            if (cartItem != null) return new GeneralResponse<CartItem?> { Message = "Product already exist in the cart", Code = 400 };
 
             try
             {
                 var result = _cartRepository.AddToCart(new CartItem { ProductId = item.ProductId, });
                 await _cartRepository.UnitOfWork.SaveChangesAsync();
 
-                return new GeneralResponse<Cart?> { Code = 201, Message = "Succcessful", Data = result };
+                return new GeneralResponse<CartItem?> { Code = 201, Message = "Succcessful", Data = result };
             }
             catch (Exception e)
             {
 
-                return new GeneralResponse<Cart?> { Code = 500, Message = $"An error occured => {e.Message}" };
+                return new GeneralResponse<CartItem?> { Code = 500, Message = $"An error occured => {e.Message}" };
             }
             
         }

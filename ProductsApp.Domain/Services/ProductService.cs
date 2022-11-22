@@ -23,7 +23,7 @@ namespace ProductsApp.Domain.Services
         {
             var existing = await _productRepository.GetProductByName(request.Name);
 
-            if (existing != null) return new GeneralResponse<Product> {Message = "Product with Name already exist", Code = 400 };
+            if (existing != null) return new GeneralResponse<Product> {Message = "Product with Name already exist", Code = 400};
 
             var item = new Product
             {
@@ -31,10 +31,20 @@ namespace ProductsApp.Domain.Services
                 Price = request.Price,
             };
 
-            var result = _productRepository.Add(item);
-            await _productRepository.UnitOfWork.SaveChangesAsync();
+            try
+            {
+                var result = _productRepository.Add(item);
+                await _productRepository.UnitOfWork.SaveChangesAsync();
 
-            return new GeneralResponse<Product> { Data = result, Message = "Successful", Code = 201};
+                return new GeneralResponse<Product> { Data = result, Message = "Successful", Code = 201 };
+            }
+            catch (Exception e)
+            {
+
+                return new GeneralResponse<Product> { Message = $"An error occoured => {e.Message}", Code = 500 };
+            }
+
+            
         }
 
         public async Task<Product> DeleteProductAsync(Guid id)

@@ -20,13 +20,9 @@ namespace ProductsApp.Infrastructure.Repositories
 
         public IUnitOfWork UnitOfWork => _context;
 
-        public Cart AddToCart(CartItem item)
+        public CartItem AddToCart(CartItem item)
         {
-            var cart = _context.Carts.FirstOrDefault();
-            cart.CartItems.Add(item);
-
-            _context.Entry(cart).State = EntityState.Modified;
-            return cart;
+            return _context.CartItems.Add(item).Entity;
         }
 
         public async Task<CartItem> GetCartItemAsync(Guid id)
