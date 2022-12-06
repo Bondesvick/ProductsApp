@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProductsApp.Infrastructure;
 
@@ -21,6 +22,18 @@ namespace ProductsApp.Extensions
                 .AddEntityFrameworkSqlServer()
                 .AddDbContext<AppDbContext>(opt =>
                 {
+                    //opt.UseSqlite(connectionString
+                    //        , x =>
+                    //         {
+                    //    //x.MigrationsAssembly(typeof(Startup)
+                    //    //    .GetTypeInfo()
+                    //    //    .Assembly
+                    //    //    .GetName().Name);
+
+                    //    x.MigrationsAssembly("ProductsApp.Infrastructure");
+                    //}
+                    //);
+
                     opt.UseSqlServer(
                         connectionString,
                         x =>

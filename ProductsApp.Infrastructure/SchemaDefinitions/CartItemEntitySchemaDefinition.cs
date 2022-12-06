@@ -25,7 +25,7 @@ namespace ProductsApp.Infrastructure.SchemaDefinitions
             builder
                 .HasOne(e => e.Product)
                 .WithMany(c => c.CartItems)
-                .HasForeignKey(c => c.CartId);
+                .HasForeignKey(c => c.ProductId);
         }
     }
 }

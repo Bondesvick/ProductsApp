@@ -9,9 +9,10 @@ namespace ProductsApp.Domain.Repositories
 {
     public interface ICartRepository : IRepository
     {
-        CartItem AddToCart(CartItem item);
+        Task<CartItem> AddToCart(CartItem item);
+        Task<Cart?> GetAsync();
         CartItem Delete(CartItem item);
-        Task<CartItem> GetCartItemAsync(Guid id);
+        Task<CartItem?> GetCartItemAsync(Guid id);
         Task<CartItem> GetCartItemByProductId(Guid id);
         decimal SumCartTotal();
     }

@@ -12,8 +12,8 @@ using ProductsApp.Infrastructure;
 namespace ProductsApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221122004737_seedCart")]
-    partial class seedCart
+    [Migration("20221206073403_First")]
+    partial class First
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,8 @@ namespace ProductsApp.Infrastructure.Migrations
 
                     b.HasIndex("CartId");
 
+                    b.HasIndex("ProductId");
+
                     b.ToTable("CartItem", (string)null);
                 });
 
@@ -66,9 +68,6 @@ namespace ProductsApp.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -93,7 +92,7 @@ namespace ProductsApp.Infrastructure.Migrations
 
                     b.HasOne("ProductsApp.Domain.Entities.Product", "Product")
                         .WithMany("CartItems")
-                        .HasForeignKey("CartId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

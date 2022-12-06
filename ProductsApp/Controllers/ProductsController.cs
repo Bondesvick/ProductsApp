@@ -64,11 +64,29 @@ namespace ProductsApp.Controllers
         {
             var response = await _productService.AddProductAsync(request);
 
-            if (response == null)
+            if (response.Data == null)
                 return StatusCode(response.Code, response);
 
             return CreatedAtAction(nameof(GetProduct),
                 new { id = response.Data.Id }, response);
+        }
+
+        /// <summary>
+        /// Get all products
+        /// </summary>
+        /// <returns></returns>
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(200, Type = typeof(Cart))]
+        [HttpGet("GetProducts")]
+        public async Task<IActionResult> GetProducts()
+        {
+            var response = await _productService.GetProductsAsync();
+
+            if (response == null)
+                return StatusCode(400, response);
+
+            return Ok(response);
         }
 
         /// <summary>
@@ -88,21 +106,17 @@ namespace ProductsApp.Controllers
         }
 
         /// <summary>
-        /// Get all products
+        /// Get Cart products
         /// </summary>
         /// <returns></returns>
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(200, Type = typeof(Cart))]
+        [ProducesResponseType(typeof(GeneralResponse<Cart>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(200, Type = typeof(GeneralResponse<Cart>))]
         [HttpGet("GetCartProducts")]
         public async Task<IActionResult> GetCartProducts()
         {
-            var response = await _productService.GetProductsAsync();
+            var cart = await _cartService.GetCartProducts();
 
-            if (response == null)
-                return StatusCode(400, response);
-
-            return Ok(response);
+            return StatusCode(cart.Code, cart);
         }
 
         /// <summary>

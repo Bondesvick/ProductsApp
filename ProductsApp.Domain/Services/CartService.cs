@@ -31,10 +31,10 @@ namespace ProductsApp.Domain.Services
 
             try
             {
-                var result = _cartRepository.AddToCart(new CartItem { ProductId = item.ProductId, });
+                var result = await _cartRepository.AddToCart(new CartItem { ProductId = product.Data.Id, });
                 await _cartRepository.UnitOfWork.SaveChangesAsync();
 
-                return new GeneralResponse<CartItem?> { Code = 201, Message = "Succcessful", Data = result };
+                return new GeneralResponse<CartItem?> { Code = 201, Message = "Product succcessfully added to card", Data = result };
             }
             catch (Exception e)
             {
@@ -47,20 +47,26 @@ namespace ProductsApp.Domain.Services
         public async Task<GeneralResponse<CartItem>> Delete(Guid id)
         {
             var item = await _cartRepository.GetCartItemAsync(id);
-            if(item!= null) return new GeneralResponse<CartItem> { Code = 404, Message = "Item with id not found in Cart" };
+            if(item == null) return new GeneralResponse<CartItem> { Code = 404, Message = "Item with id not found in Cart" };
 
             try
             {
                 var result = _cartRepository.Delete(item);
                 await _cartRepository.UnitOfWork.SaveChangesAsync();
 
-                return new GeneralResponse<CartItem> { Code = 200, Message = "Item successfully deleted" };
+                return new GeneralResponse<CartItem> { Code = 200, Message = "Item successfully deleted from cart" };
             }
             catch (Exception e)
             {
 
                 return new GeneralResponse<CartItem> { Code = 500, Message = $"An error occured => {e.Message}" };
             }
+        }
+
+        public async Task<GeneralResponse<Cart?>> GetCartProducts()
+        {
+            var cart = await _cartRepository.GetAsync();
+            return new GeneralResponse<Cart?> { Data = cart, Message = "Successful", Code = 200 };
         }
 
         public GeneralResponse<CartSum> GetCartSum()

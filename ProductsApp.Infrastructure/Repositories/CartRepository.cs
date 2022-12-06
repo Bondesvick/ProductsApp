@@ -20,20 +20,28 @@ namespace ProductsApp.Infrastructure.Repositories
 
         public IUnitOfWork UnitOfWork => _context;
 
-        public CartItem AddToCart(CartItem item)
+        public async Task<CartItem> AddToCart(CartItem item)
         {
-            return _context.CartItems.Add(item).Entity;
+            var cart = await _context.Carts.FirstOrDefaultAsync();
+
+            item.CartId = cart.Id;
+            var entity = await _context.CartItems.AddAsync(item);
+
+            return entity.Entity;
         }
 
-        public async Task<CartItem> GetCartItemAsync(Guid id)
+        public async Task<CartItem?> GetCartItemAsync(Guid id)
         {
-            var product = await _context.CartItems.Where(s => s.Id == id)
-               .AsNoTracking().FirstOrDefaultAsync();
+            var cartItem = await _context.CartItems.FirstOrDefaultAsync(s => s.Id == id);
 
-            if (product == null) return null;
+            if (cartItem == null) return null;
 
-            _context.Entry(product).State = EntityState.Detached;
-            return product;
+            return cartItem;
+        }
+
+        public async Task<Cart?> GetAsync()
+        {
+            return await _context.Carts.Include(x => x.CartItems).FirstOrDefaultAsync();
         }
 
         public async Task<CartItem> GetCartItemByProductId(Guid id)

@@ -14,5 +14,6 @@ namespace ProductsApp.Domain.Services
         Task<GeneralResponse<CartItem?>> AddToCart(AddProductToCart item);
         Task<GeneralResponse<CartItem>> Delete(Guid id);
         GeneralResponse<CartSum> GetCartSum();
+        Task<GeneralResponse<Cart?>> GetCartProducts();
     }
 }

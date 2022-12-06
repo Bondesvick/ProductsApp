@@ -7,13 +7,29 @@ using ProductsApp.Domain.Services;
 using ProductsApp.Extensions;
 using ProductsApp.Infrastructure.Repositories;
 using System.Reflection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-builder.Services.AddAppDbContext(builder.Configuration.GetSection("DataSource:ConnectionString").Value);
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true)
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
+
+//builder.Services.AddAppDbContext(builder.Configuration.GetSection("DataSource:ConnectionString").Value);
+
+builder.Services.AddAppDbContext(builder.Configuration.GetConnectionString("DbConn"));
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();

@@ -36,7 +36,7 @@ namespace ProductsApp.Domain.Services
                 var result = _productRepository.Add(item);
                 await _productRepository.UnitOfWork.SaveChangesAsync();
 
-                return new GeneralResponse<Product> { Data = result, Message = "Successful", Code = 201 };
+                return new GeneralResponse<Product> { Data = result, Message = $"New Product {result.Name} successfully saved", Code = 201 };
             }
             catch (Exception e)
             {
