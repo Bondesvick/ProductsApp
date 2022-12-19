@@ -14,7 +14,7 @@ namespace ProductsApp.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -78,7 +78,7 @@ namespace ProductsApp.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Cart), (int)HttpStatusCode.OK)]
         [ProducesResponseType(200, Type = typeof(Cart))]
-        [HttpGet("GetProducts")]
+        [HttpGet()]
         public async Task<IActionResult> GetProducts()
         {
             var response = await _productService.GetProductsAsync();
@@ -97,7 +97,7 @@ namespace ProductsApp.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(GeneralResponse<CartItem>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(201, Type = typeof(GeneralResponse<CartItem>))]
-        [HttpPost("AddProductToCart")]
+        [HttpPost()]
         public async Task<IActionResult> AddProductToCart(AddProductToCart request)
         {
             var response = await _cartService.AddToCart(request);
@@ -111,7 +111,7 @@ namespace ProductsApp.Controllers
         /// <returns></returns>
         [ProducesResponseType(typeof(GeneralResponse<Cart>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(200, Type = typeof(GeneralResponse<Cart>))]
-        [HttpGet("GetCartProducts")]
+        [HttpGet()]
         public async Task<IActionResult> GetCartProducts()
         {
             var cart = await _cartService.GetCartProducts();
@@ -125,7 +125,7 @@ namespace ProductsApp.Controllers
         /// <returns></returns>
         [ProducesResponseType(typeof(GeneralResponse<CartSum>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(200, Type = typeof(GeneralResponse<CartSum>))]
-        [HttpGet("GetCartProductsTotalPrice")]
+        [HttpGet()]
         public IActionResult GetCartProductsTotalPrice()
         {
             var sum = _cartService.GetCartSum();
@@ -141,7 +141,7 @@ namespace ProductsApp.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Product>))]
-        [HttpPost("SearchProduct")]
+        [HttpPost()]
         public async Task<IActionResult> SearchProduct(SearchProduct request)
         {
             var response = await _productService.SearchProductsAsync(request);
@@ -158,7 +158,7 @@ namespace ProductsApp.Controllers
         /// <returns></returns>
         [ProducesResponseType(typeof(GeneralResponse<CartSum>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(200, Type = typeof(GeneralResponse<CartSum>))]
-        [HttpDelete("DeleteCartItem/{id:guid}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteCartItem(Guid id)
         {
             var response = await _cartService.Delete(id);
